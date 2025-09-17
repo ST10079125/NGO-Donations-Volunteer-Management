@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Upload Event Report</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    .navbar {
+      background-color: #007bff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+    .logo { font-size: 1.5rem; font-weight: 700; }
+    .navbar nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .navbar nav ul li a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      display: flex;
+      padding: 2rem;
+      gap: 2rem;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #343a40;
+      color: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+    .sidebar ul { list-style: none; padding: 0; }
+    .sidebar ul li { margin-bottom: 1rem; }
+    .sidebar ul li a {
+      color: #adb5bd;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .sidebar ul li a.active,
+    .sidebar ul li a:hover {
+      color: #fff;
+    }
+    main {
+      flex: 1;
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      margin-top: 0;
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 0.5rem;
+      color: #212529;
+    }
+    form label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+    form input, form select, form textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ced4da;
+      border-radius: 5px;
+    }
+    form textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    form button {
+      margin-top: 1.5rem;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    form button:hover {
+      background-color: #0056b3;
+    }
+    #reportMessage {
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      .container { flex-direction: column; }
+      .sidebar { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="logo">NGO System</div>
+      <nav>
+        <ul>
+          <li><a href="donor.html">Dashboard</a></li>
+          <li><a href="volunteer.html">Activities</a></li>
+          <li><a href="event.html" class="active">Events</a></li>
+          <li><a href="donate.html">Donate</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li><a href="#" class="active">Upload Event Report</a></li>
+        <li><a href="#">Manage Event</a></li>
+      </ul>
+    </aside>
+
+    <main>
+      <h2>Upload Event Report</h2>
+      <form id="reportForm" novalidate>
+        <label for="name">First Name</label>
+        <input type="text" id="name" required />
+
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" required />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+
+        <label for="eventSelect">Select Event</label>
+        <select id="eventSelect" required>
+          <option value="" disabled selected>Select an event</option>
+          <option value="Food Drive">Food Drive</option>
+          <option value="Community Services">Community Services</option>
+          <option value="Tree Planting">Tree Planting</option>
+          <option value="Youth Workshop">Youth Workshop</option>
+        </select>
+
+        <label for="reportText">Report Description</label>
+        <textarea id="reportText" required></textarea>
+
+        <button type="submit">Upload Report</button>
+        <p id="reportMessage" aria-live="polite"></p>
+      </form>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBko38VZkjIzjAlKALO78AW2kYAJ3JcRkU",
+      authDomain: "ngo-system-4b4af.firebaseapp.com",
+      projectId: "ngo-system-4b4af",
+      storageBucket: "ngo-system-4b4af.appspot.com",
+      messagingSenderId: "533591914235",
+      appId: "1:533591914235:web:ac319ca6d29d4f1ffba25e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const form = document.getElementById("reportForm");
+    const message = document.getElementById("reportMessage");
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        currentUser = user;
+        console.log("Signed in as:", user.uid);
+      } else {
+        signInAnonymously(auth).catch(error => {
+          console.error("Anonymous sign-in failed:", error);
+          message.textContent = "Authentication failed. Please reload and try again.";
+          message.style.color = "red";
+        });
+      }
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      message.textContent = "";
+      message.style.color = "black";
+
+      if (!currentUser) {
+        message.textContent = "Authentication is required to upload reports.";
+        message.style.color = "red";
+        return;
+      }
+
+      const name = document.getElementById("name").value.trim();
+      const surname = document.getElementById("surname").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const eventName = document.getElementById("eventSelect").value;
+      const reportText = document.getElementById("reportText").value.trim();
+
+      if (!name || !surname || !email || !eventName || !reportText) {
+        message.textContent = "Please complete all required fields.";
+        message.style.color = "red";
+        return;
+      }
+
+      try {
+        message.textContent = "Uploading... Please wait.";
+
+        await addDoc(collection(db, "eventReports"), {
+          uid: currentUser.uid,
+          name,
+          surname,
+          email,
+          event: eventName,
+          reportText,
+          createdAt: new Date()
+        });
+
+        message.textContent = "Report uploaded successfully!";
+        message.style.color = "green";
+        form.reset();
+      } catch (error) {
+        console.error("Upload failed:", error);
+        message.textContent = "Failed to upload report: " + error.message;
+        message.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
