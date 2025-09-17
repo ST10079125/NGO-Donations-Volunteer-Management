@@ -1,0 +1,22 @@
+name: Volunteer Module CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Verify HTML files
+      run: |
+        echo "Checking HTML files..."
+        for file in $(find . -name "*.html"); do
+          echo "Found $file"
+        done
