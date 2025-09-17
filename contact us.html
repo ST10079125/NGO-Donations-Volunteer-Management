@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - NGO System</title>
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 30px;
+      background-color: #007bff;
+      box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1.5px;
+      user-select: none;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a {
+      color: #f8f9fa;
+      font-weight: 600;
+      font-size: 17px;
+      text-decoration: none;
+      padding: 6px 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    nav ul li a:hover,
+    nav ul li a:focus {
+      border-bottom-color: #ffc107;
+      color: #ffc107;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .login-btn {
+      background-color: #fff;
+      color: #007bff;
+      border: 2px solid #fff;
+      padding: 8px 22px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease,
+        color 0.3s ease;
+    }
+
+    .login-btn a {
+      color: inherit;
+      text-decoration: none;
+      display: block;
+    }
+
+    .login-btn:hover,
+    .login-btn:focus {
+      background-color: transparent;
+      color: #ffc107;
+      border-color: #ffc107;
+    }
+    .contact-form {
+    background: #ffffff;
+    padding: 40px;
+    max-width: 600px;
+    margin: 30px auto;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+    .contact-form label {
+        display: block;
+        margin: 15px 0 5px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #00796b;
+
+    }
+
+    .contact-form input, .contact-form textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .contact-form button {
+        display: block;
+        width: 100%;
+        background: #00796b;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.2em;
+        cursor: pointer;
+    }
+
+    .contact-form button:hover {
+        background: #004d40;
+    }
+
+
+    .contact-info {
+        background: #e0f2f1;
+        padding: 30px;
+    }
+
+    .contact-info h2 {
+        color: #00796b;
+        margin-top: 20px;
+    }
+
+    .contact-info ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .contact-info li a {
+        color: #00796b;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .contact-info li a:hover {
+        text-decoration: underline;
+    
+    }
+    h1 {
+    font-size: 2em;
+    text-align: center;
+    }
+
+    </style>
+</head>
+<body>
+  <header>
+    <div class="navbar" role="navigation" aria-label="Primary navigation">
+      <div class="logo">NGO System</div>
+      <nav>
+        <ul>
+          <li><a href="home.html">Home</a></li>
+          <li><a href="about us.html">About Us</a></li>
+          <li><a href="contact us.html">Contact Us</a></li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        <button class="login-btn"><a href="sign.html">Sign Up</a></button>
+        <button class="login-btn"><a href="log.html">Log In</a></button>
+      </div>
+    </div>
+  </header>
+    <header>
+        <h1>📬 Contact Us</h1>
+        <p style="text-align: center;">Complete the form and we’ll respond as soon as possible.</p>
+    </header>
+
+    <section class="contact-form">
+        <form action="submit-form.php" method="POST">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+
+    <section class="contact-info">
+        <h2>📧 Email</h2>
+        <p>support@ngosystem.org</p>
+
+        <h2>📞 Phone</h2>
+        <p>+27 87 654 3210 <br>(Monday–Friday | 9 AM – 5 PM)</p>
+
+        <h2>📍 Head Office</h2>
+        <p>Donations and Volunteer Management System<br>
+        456 Ubuntu Drive, Johannesburg, South Africa</p>
+
+        <h2>🌍 Social Media</h2>
+        <p>Stay updated, inspired, and informed:</p>
+        <ul>
+            <li>Facebook: <a href="https://facebook.com/NGOSystem" target="_blank">facebook.com/NGOSystem</a></li>
+            <li>Twitter/X: <a href="https://twitter.com/NGOSystemZA" target="_blank">@NGOSystemZA</a></li>
+            <li>Instagram: <a href="https://instagram.com/NGOSystemAfrica" target="_blank">@NGOSystemAfrica</a></li>
+            <li>LinkedIn: <a href="https://linkedin.com/company/NGOSystemAfrica" target="_blank">NGO System – Africa</a></li>
+        </ul>
+    </section>
+    <footer class="footer">
+        <p>Copyright © 2022 All Rights Reserved |</p>
+    </footer>
+</body>
+</html>

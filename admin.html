@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0; padding: 0;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    main {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .section-card {
+      background-color: #fff;
+      padding: 25px;
+      margin-bottom: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    .section-card h2 {
+      margin-top: 0;
+      font-size: 22px;
+      color: #1d3557;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      table-layout: fixed;
+      word-wrap: break-word;
+    }
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      background-color: #457b9d;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .btn-download {
+      background-color: #2a9d8f;
+      border: none;
+      color: white;
+      padding: 10px 18px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-download:hover {
+      background-color: #21867a;
+    }
+    #total-donated {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #2a9d8f;
+    }
+    #search-container {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    #search-box, #search-quiz {
+      padding: 8px 12px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f1f1f1;
+      color: #888;
+      font-size: 14px;
+    }
+    .no-data {
+      text-align: center;
+      font-style: italic;
+      color: #666;
+    }
+    td.answers-cell {
+      max-height: 150px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header>NGO Admin Dashboard</header>
+
+  <main>
+   
+    <section class="section-card">
+      <h2>Donation History <button class="btn-download" onclick="downloadDonationPDF()">Download PDF</button></h2>
+
+      <div id="total-donated">Total Donated: ZAR 0.00</div>
+
+      <div id="search-container">
+        <input type="text" id="search-box" placeholder="Search donor by name..." />
+      </div>
+
+      <table id="donation-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Organization</th>
+            <th>Email</th>
+            <th>Contact</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Date</th>
+            <th>Uploaded File</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+   
+    <section class="section-card">
+      <h2>Quiz Submissions</h2>
+
+      <div id="search-container">
+        <input type="text" id="search-quiz" placeholder="Search quiz submissions by name or email..." />
+      </div>
+
+      <table id="quiz-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Time Taken</th>
+            <th>Timed Out?</th>
+            <th style="width: 45%;">Answers</th>
+            <th>Submitted At</th>
+          </tr>
+        </thead>
+        <tbody><tr><td colspan="6" class="no-data">Loading quiz submissions...</td></tr></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>© 2025 NGO Admin Panel. All rights reserved.</footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBko38VZkjIzjAlKALO78AW2kYAJ3JcRkU",
+      authDomain: "ngo-system-4b4af.firebaseapp.com",
+      projectId: "ngo-system-4b4af",
+      storageBucket: "ngo-system-4b4af.appspot.com",
+      messagingSenderId: "533591914235",
+      appId: "1:533591914235:web:ac319ca6d29d4f1ffba25e",
+      measurementId: "G-HFXK3FSXHR"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+ 
+
+    let donationData = [];
+
+    function renderDonations(filteredData) {
+      const tbody = document.querySelector("#donation-table tbody");
+      tbody.innerHTML = "";
+      if (filteredData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="no-data">No donations found.</td></tr>';
+        return;
+      }
+      filteredData.forEach(d => {
+        const fileLink = d.uploadUrl ? `<a href="${d.uploadUrl}" target="_blank" rel="noopener noreferrer">Download</a>` : 'N/A';
+        const row = `
+          <tr>
+            <td>${d.name || ''}</td>
+            <td>${d.organization || ''}</td>
+            <td>${d.email || ''}</td>
+            <td>${d.contact || ''}</td>
+            <td>ZAR ${parseFloat(d.amount || 0).toFixed(2)}</td>
+            <td>${d.method || ''}</td>
+            <td>${d.date}</td>
+            <td>${fileLink}</td>
+          </tr>
+        `;
+        tbody.insertAdjacentHTML("beforeend", row);
+      });
+    }
+
+    function fetchDonations() {
+      db.collection("donations").orderBy("donatedAt", "desc").get()
+        .then(snapshot => {
+          donationData = [];
+          let totalAmount = 0;
+          snapshot.forEach(doc => {
+            const d = doc.data();
+            const donationObj = {
+              name: d.name || '',
+              organization: d.organization || '',
+              email: d.email || '',
+              contact: d.contact || '',
+              amount: parseFloat(d.amount) || 0,
+              method: d.method || '',
+              uploadUrl: d.uploadUrl || '',
+              date: d.donatedAt ? new Date(d.donatedAt.seconds * 1000).toLocaleString() : ''
+            };
+            totalAmount += donationObj.amount;
+            donationData.push(donationObj);
+          });
+          document.getElementById('total-donated').textContent = `Total Donated: ZAR ${totalAmount.toFixed(2)}`;
+          renderDonations(donationData);
+        }).catch(err => {
+          console.error("Error loading donations:", err);
+        });
+    }
+
+ 
+    function handleDonationSearch() {
+      const val = document.getElementById('search-box').value.trim().toLowerCase();
+      if (!val) {
+        renderDonations(donationData);
+        return;
+      }
+      const filtered = donationData.filter(d => (d.name.toLowerCase().includes(val)));
+      renderDonations(filtered);
+    }
+
+   
+    function downloadDonationPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("Donation Report", 14, 20);
+
+      const tbodyRows = document.querySelectorAll("#donation-table tbody tr");
+      const bodyData = [];
+      tbodyRows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const rowData = [];
+        cells.forEach(cell => rowData.push(cell.textContent));
+        bodyData.push(rowData);
+      });
+
+      doc.autoTable({
+        head: [["Name", "Organization", "Email", "Contact", "Amount", "Method", "Date", "Uploaded File"]],
+        body: bodyData,
+        startY: 30,
+        styles: { fontSize: 8 }
+      });
+      doc.save("donation_report.pdf");
+    }
+
+
+
+    let quizData = [];
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+
+    function renderQuizSubmissions(filteredData) {
+      const tbody = document.querySelector("#quiz-table tbody");
+      tbody.innerHTML = "";
+      if (filteredData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="no-data">No quiz submissions found.</td></tr>';
+        return;
+      }
+      filteredData.forEach(sub => {
+        const answersText = Object.entries(sub.answers)
+          .map(([key,val]) => `${key.toUpperCase()}: ${val}`)
+          .join('\n\n');
+        const submittedAt = sub.submittedAt ? new Date(sub.submittedAt).toLocaleString() : '';
+        const row = `
+          <tr>
+            <td>${sub.userName || ''}</td>
+            <td>${sub.userEmail || ''}</td>
+            <td>${formatTime(sub.timeTakenSeconds || 0)}</td>
+            <td>${sub.timedOut ? "Yes" : "No"}</td>
+            <td class="answers-cell" title="Click to scroll">${answersText}</td>
+            <td>${submittedAt}</td>
+          </tr>
+        `;
+        tbody.insertAdjacentHTML("beforeend", row);
+      });
+    }
+
+    function fetchQuizSubmissions() {
+      db.collection('quizSubmissions').orderBy("submittedAt", "desc").get()
+        .then(snapshot => {
+          quizData = [];
+          snapshot.forEach(doc => {
+            quizData.push(doc.data());
+          });
+          renderQuizSubmissions(quizData);
+        })
+        .catch(err => {
+          console.error("Error loading quiz submissions:", err);
+          const tbody = document.querySelector("#quiz-table tbody");
+          tbody.innerHTML = '<tr><td colspan="6" class="no-data">Failed to load quiz submissions.</td></tr>';
+        });
+    }
+
+   
+    function handleQuizSearch() {
+      const val = document.getElementById('search-quiz').value.trim().toLowerCase();
+      if (!val) {
+        renderQuizSubmissions(quizData);
+        return;
+      }
+      const filtered = quizData.filter(q => 
+        (q.userName && q.userName.toLowerCase().includes(val)) || 
+        (q.userEmail && q.userEmail.toLowerCase().includes(val))
+      );
+      renderQuizSubmissions(filtered);
+    }
+
+
+    window.addEventListener("DOMContentLoaded", () => {
+      fetchDonations();
+      fetchQuizSubmissions();
+      document.getElementById('search-box').addEventListener('input', handleDonationSearch);
+      document.getElementById('search-quiz').addEventListener('input', handleQuizSearch);
+    });
+  </script>
+</body>
+</html>

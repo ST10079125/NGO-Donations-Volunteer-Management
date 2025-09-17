@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NGO Knowledge Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0; padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .navbar {
+      background-color: #007bff;
+      padding: 1rem 2rem;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar a {
+      color: #fff;
+      margin-left: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    main {
+      flex-grow: 1;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1.5rem 2rem;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #007bff;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      width: 100%;
+      resize: vertical;
+    }
+    .question {
+      margin-bottom: 1rem;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1.1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      align-self: center;
+      margin-top: 1.5rem;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #timer {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #d9534f;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    #message {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      text-align: center;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div>NGO System</div>
+    <nav>
+      <a href="donor.html">Dashboard</a>
+      <a href="game.html">Games</a>
+      <a href="event.html">Events</a>
+      <a href="donate.html">Donate</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>NGO Knowledge Quiz</h1>
+    <div id="timer">Time Remaining: 05:00</div>
+
+    <form id="quiz-form">
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" required />
+
+      <label for="email">Your Email:</label>
+      <input type="email" id="email" required />
+
+      <div id="questions-container"></div>
+
+      <button type="submit">Submit Answers</button>
+    </form>
+
+    <div id="message"></div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBko38VZkjIzjAlKALO78AW2kYAJ3JcRkU",
+      authDomain: "ngo-system-4b4af.firebaseapp.com",
+      projectId: "ngo-system-4b4af",
+      storageBucket: "ngo-system-4b4af.appspot.com",
+      messagingSenderId: "533591914235",
+      appId: "1:533591914235:web:ac319ca6d29d4f1ffba25e"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const questions = [
+      { id: 1, text: "What is the primary goal of a community cleanup?" },
+      { id: 2, text: "Which type of waste should be recycled during a cleanup?" },
+      { id: 3, text: "Name one safety measure volunteers should take during cleanup." },
+      { id: 4, text: "What are the main benefits of organizing a food drive?" },
+      { id: 5, text: "Which foods are best suited for donation in a food drive?" },
+      { id: 6, text: "How do you ensure food safety during distribution?" }
+    ];
+
+    const questionsContainer = document.getElementById('questions-container');
+    questions.forEach(q => {
+      const div = document.createElement('div');
+      div.classList.add('question');
+      div.innerHTML = `
+        <label for="q${q.id}">${q.id}. ${q.text}</label>
+        <textarea id="q${q.id}" name="q${q.id}" rows="3" required placeholder="Your answer here..."></textarea>
+      `;
+      questionsContainer.appendChild(div);
+    });
+
+    let timeLeft = 300;
+    const timerEl = document.getElementById('timer');
+    const messageEl = document.getElementById('message');
+    const formEl = document.getElementById('quiz-form');
+    let timerInterval;
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      timerEl.textContent = `Time Remaining: ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        timerEl.textContent = "Time is up!";
+        submitQuiz(true);
+      }
+      timeLeft--;
+    }
+
+    function submitQuiz(isTimeout = false) {
+      formEl.querySelector('button[type="submit"]').disabled = true;
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!isTimeout && (!name || !email)) {
+        alert('Please fill in your name and email.');
+        formEl.querySelector('button[type="submit"]').disabled = false;
+        return;
+      }
+
+      const answers = {};
+      for (let i = 1; i <= questions.length; i++) {
+        const ans = document.getElementById(`q${i}`).value.trim();
+        if (!ans && !isTimeout) {
+          alert(`Please answer question ${i}.`);
+          formEl.querySelector('button[type="submit"]').disabled = false;
+          return;
+        }
+        answers[`q${i}`] = ans || "(No answer provided)";
+      }
+
+      const timeTaken = 300 - timeLeft - (isTimeout ? 0 : 1);
+
+      db.collection('quizSubmissions').add({
+        uid: "anonymous",
+        name: name,
+        email: email,
+        answers: answers,
+        score: 0,
+        timeTaken: timeTaken,
+        submittedAt: firebase.firestore.Timestamp.now(),
+        timedOut: isTimeout
+      }).then(() => {
+        messageEl.style.color = 'green';
+        messageEl.textContent = isTimeout ?
+          "Time is up! Your answers have been submitted automatically." :
+          "Thank you! Your answers have been submitted successfully.";
+        formEl.style.display = 'none';
+        clearInterval(timerInterval);
+      }).catch((error) => {
+        messageEl.style.color = 'red';
+        messageEl.textContent = "Submission failed, please try again later.";
+        formEl.querySelector('button[type="submit"]').disabled = false;
+        console.error("Error submitting quiz:", error);
+      });
+    }
+
+    timerInterval = setInterval(updateTimer, 1000);
+
+    formEl.addEventListener('submit', e => {
+      e.preventDefault();
+      clearInterval(timerInterval);
+      submitQuiz(false);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donate</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+
+     *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+      line-height: 1.5;
+    }
+
+   
+    
+
+  
+    .navbar {
+      background-color: #007bff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .navbar nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+    .navbar nav ul li a:hover,
+    .navbar nav ul li a:focus {
+      background-color: #0056b3;
+      outline: none;
+      color: #e2e6ea;
+    }
+
+
+    .donation-summary {
+      text-align: center;
+      margin: 30px auto;
+    }
+
+    .donation-summary h2 {
+      font-size: 24px;
+    }
+
+    .btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #218838;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #donation-form {
+      max-width: 500px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .payment-options {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .payment-options p {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .payment-options .pay-btn {
+      margin: 8px;
+      padding: 10px 16px;
+      font-size: 15px;
+      border: none;
+      border-radius: 6px;
+      background-color: #17a2b8;
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .payment-options .pay-btn:hover {
+      background-color: #117a8b;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 10px;
+      margin-top: 40px;
+      background-color: #eaeaea;
+      color: #666;
+      font-size: 14px;
+    }
+
+    h3 {
+      margin-top: 0;
+      color: #008080;
+    }
+  </style>
+</head>
+<body>
+  
+  <header>
+   <div class="navbar">
+      <div class="logo">NGO System</div>
+      <nav>
+        <ul>
+          <li><a href="donor.html">Dashboard</a></li>
+          <li><a href="volunteer.html">Activities</a></li>
+          <li><a href="event.html" class="active">Events</a></li>
+          <li><a href="donate.html">Donate</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+
+  <section class="donation-summary">
+    <h2>Total Donations: R <span id="total-donations">0.00</span></h2>
+  </section>
+
+  <div id="donation-form">
+    <h3>Enter Your Donation Details</h3>
+
+    <input type="text" id="donor-name" placeholder="Full Name" required />
+    <input type="text" id="donor-organization" placeholder="Organization (optional)" />
+    <input type="email" id="donor-email" placeholder="Email Address" required />
+    <input type="tel" id="donor-contact" placeholder="Contact Number" required />
+    <input type="number" id="donation-amount" placeholder="Donation Amount (R)" required min="1" />
+
+    <div class="payment-options">
+      <p>Select Payment Method:</p>
+      <button class="pay-btn" onclick="selectPayment('Credit Card')">
+        <i class="fas fa-credit-card"></i> Credit Card
+      </button>
+      <button class="pay-btn" onclick="selectPayment('PayPal')">
+        <i class="fab fa-paypal"></i> PayPal
+      </button>
+      <button class="pay-btn" onclick="selectPayment('SnapScan')">
+        <i class="fas fa-qrcode"></i> SnapScan
+      </button>
+      <button class="pay-btn" onclick="selectPayment('EFT')">
+        <i class="fas fa-university"></i> EFT
+      </button>
+      <button class="pay-btn" onclick="selectPayment('Crypto')">
+        <i class="fab fa-bitcoin"></i> Crypto
+      </button>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="btn" id="submit-donation">Submit Donation</button>
+      <button class="btn hidden" id="done-btn">Done</button>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 NGO Foundation. All rights reserved.
+  </footer>
+
+  
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDVv...YourKey...",
+      authDomain: "ngo-system.firebaseapp.com",
+      projectId: "ngo-system-4b4af",
+      storageBucket: "ngo-system-4b4af.appspot.com",
+      messagingSenderId: "444768580598",
+      appId: "1:444768580598:web:b802d8551d055ba4dd6d7e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let selectedPayment = "";
+
+    function selectPayment(method) {
+      selectedPayment = method;
+      alert("Selected payment method: " + method);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const submitBtn = document.getElementById("submit-donation");
+      const doneBtn = document.getElementById("done-btn");
+
+      const amountInput = document.getElementById("donation-amount");
+      const totalDonationsDisplay = document.getElementById("total-donations");
+
+      const nameInput = document.getElementById("donor-name");
+      const orgInput = document.getElementById("donor-organization");
+      const emailInput = document.getElementById("donor-email");
+      const contactInput = document.getElementById("donor-contact");
+
+      submitBtn.addEventListener("click", () => {
+        const name = nameInput.value.trim();
+        const organization = orgInput.value.trim();
+        const email = emailInput.value.trim();
+        const contact = contactInput.value.trim();
+        const amount = parseFloat(amountInput.value);
+
+        if (!name || !email || !contact) {
+          alert("Please fill in all required fields.");
+          return;
+        }
+
+        if (!amount || amount <= 0) {
+          alert("Enter a valid donation amount.");
+          return;
+        }
+
+        if (!selectedPayment) {
+          alert("Please select a payment method.");
+          return;
+        }
+
+        db.collection("donations").add({
+          name,
+          organization,
+          email,
+          contact,
+          amount,
+          method: selectedPayment,
+          donatedAt: new Date().toISOString()
+        })
+        .then(() => {
+          alert(`Thank you, ${name}, for your donation of R ${amount.toFixed(2)} via ${selectedPayment}!`);
+          nameInput.value = "";
+          orgInput.value = "";
+          emailInput.value = "";
+          contactInput.value = "";
+          amountInput.value = "";
+          selectedPayment = "";
+          doneBtn.classList.remove("hidden");
+          updateTotalDonations();
+        })
+        .catch((error) => {
+          console.error("Error saving donation:", error);
+          alert("An error occurred. Please try again.");
+        });
+      });
+
+      function updateTotalDonations() {
+        db.collection("donations").get().then((snapshot) => {
+          let total = 0;
+          snapshot.forEach((doc) => {
+            total += doc.data().amount || 0;
+          });
+          totalDonationsDisplay.textContent = total.toFixed(2);
+        });
+      }
+
+      updateTotalDonations();
+    });
+  </script>
+</body>
+</html>

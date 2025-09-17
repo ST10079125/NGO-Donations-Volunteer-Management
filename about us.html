@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - NGO System</title>
+    <style>
+     body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 30px;
+      background-color: #007bff;
+      box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1.5px;
+      user-select: none;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a {
+      color: #f8f9fa;
+      font-weight: 600;
+      font-size: 17px;
+      text-decoration: none;
+      padding: 6px 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    nav ul li a:hover,
+    nav ul li a:focus {
+      border-bottom-color: #ffc107;
+      color: #ffc107;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .login-btn {
+      background-color: #fff;
+      color: #007bff;
+      border: 2px solid #fff;
+      padding: 8px 22px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease,
+        color 0.3s ease;
+    }
+
+    .login-btn a {
+      color: inherit;
+      text-decoration: none;
+      display: block;
+    }
+
+    .login-btn:hover,
+    .login-btn:focus {
+      background-color: transparent;
+      color: #ffc107;
+      border-color: #ffc107;
+    }
+h1 {
+    font-size: 2.5em;
+}
+
+p {
+    font-size: 1.2em;
+}
+.about {
+    text-align: center;
+    padding: 50px 20px;
+    background: #ffffff;
+}
+
+.about img {
+    width: 100%;
+    max-width: 800px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 50px 20px;
+    background: #e0f2f1;
+}
+
+.feature {
+    text-align: center;
+    padding: 40px;
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    background-size: cover;
+    background-position: center;
+    font-weight: bold;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.feature i {
+    font-size: 50px;
+    color: #00796b;
+    margin-bottom: 15px;
+}
+
+
+.feature:nth-child(1) {
+    background-image: url('images/image1.jpg');
+}
+
+.feature:nth-child(2) {
+    background-image: url('images/image2.jpg');
+}
+
+.feature:nth-child(3) {
+    background-image: url('images/event.jpeg');
+}
+
+.feature:nth-child(4) {
+    background-image: url('images/donation.jpg');
+}
+.feature:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.feature h3 {
+    font-size: 1.5em;
+    color: #00796b;
+}
+.call-to-action {
+    text-align: center;
+    padding: 60px 20px;
+    background: #00796b;
+    color: #fff;
+}
+
+.btn {
+    display: inline-block;
+    background: #ffc107;
+    color: #333;
+    padding: 15px 25px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+}
+.btn:hover {
+    background: #ff9800;
+}
+
+
+    </style>
+</head>
+<body>
+ <header>
+    <div class="navbar" role="navigation" aria-label="Primary navigation">
+      <div class="logo">NGO System</div>
+      <nav>
+        <ul>
+          <li><a href="home.html">Home</a></li>
+          <li><a href="about us.html">About Us</a></li>
+          <li><a href="contact us.html">Contact Us</a></li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        <button class="login-btn"><a href="sign.html">Sign Up</a></button>
+        <button class="login-btn"><a href="log.html">Log In</a></button>
+      </div>
+    </div>
+  </header>
+  
+      <header>
+        <h1 style="text-align: center;">About</h1>
+        <p style="text-align: center;">Empowering communities through streamlined outreach.</p>
+    </header>
+  </header>
+  <section class="about">
+         <img src="images/image.jpg" alt="NGO helping community">
+         <h2>Who We Are</h2>
+         <p>Our Donation and Volunteer Management System simplifies NGO operations by making fundraising, event planning, and volunteer coordination effortless.</p>
+     </section>
+
+     <section class="features">
+         <div class="feature">
+             <i class="fas fa-hand-holding-heart"></i>
+             <h3>Manage Donors</h3>
+             <p>Store donor data, track contributions, and build meaningful connections.</p>
+         </div>
+         <div class="feature">
+             <i class="fas fa-users"></i>
+             <h3>Register Volunteers</h3>
+             <p>Individuals can sign up and support impactful causes.</p>
+         </div>
+         <div class="feature">
+             <i class="fas fa-calendar-alt"></i>
+             <h3>Organize Events</h3>
+             <p>Plan charity events with structured volunteer and donor involvement.</p>
+         </div>
+         <div class="feature">
+             <i class="fas fa-donate"></i>
+             <h3>Track Donations</h3>
+             <p>Efficiently monitor financial and material donations with full transparency.</p>
+         </div>
+     </section>
+
+     <section class="call-to-action">
+         <h2>Join the Change</h2>
+         <p>Become a part of our mission today.</p>
+         <a href="sign.html" class="btn">Sign Up as a Volunteer</a>
+     </section>
+
+     <footer class="footer">
+         <p>Copyright © 2022 All Rights Reserved |</p>
+     </footer>
+
+</body>
+</html>
